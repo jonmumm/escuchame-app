@@ -11,8 +11,9 @@ import 'node:http';
 import 'node:tls';
 import 'mime';
 import 'string-width';
-import '@astrojs/react/server.js';
+import 'react';
+import 'react-dom/server';
 
-const page = () => import('./pages/products.ts.9b52282c.mjs');
+const page = () => import('./pages/login.form.async.ts.2ff9c189.mjs');
 
 export { page };

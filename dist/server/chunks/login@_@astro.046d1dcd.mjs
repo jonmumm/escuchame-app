@@ -11,8 +11,9 @@ import 'node:http';
 import 'node:tls';
 import 'mime';
 import 'string-width';
-import '@astrojs/react/server.js';
+import 'react';
+import 'react-dom/server';
 
-const page = () => import('./pages/index.astro.300708e4.mjs').then(n => n.i);
+const page = () => import('./pages/login.astro.19bacf53.mjs');
 
 export { page };

@@ -9,4 +9,7 @@ export default defineConfig({
     mode: "standalone",
   }),
   integrations: [react()],
+  server: {
+    host: "0.0.0.0",
+  },
 });

@@ -11,8 +11,9 @@ import 'node:http';
 import 'node:tls';
 import 'mime';
 import 'string-width';
-import '@astrojs/react/server.js';
+import 'react';
+import 'react-dom/server';
 
-const page = () => import('./pages/_id_.ts.f0c01515.mjs').then(n => n._);
+const page = () => import('./pages/products.ts.9b52282c.mjs');
 
 export { page };

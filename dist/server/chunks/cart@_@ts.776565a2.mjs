@@ -11,8 +11,9 @@ import 'node:http';
 import 'node:tls';
 import 'mime';
 import 'string-width';
-import '@astrojs/react/server.js';
+import 'react';
+import 'react-dom/server';
 
-const page = () => import('./pages/listen.astro.018db81f.mjs');
+const page = () => import('./pages/cart.ts.9632e79c.mjs');
 
 export { page };
