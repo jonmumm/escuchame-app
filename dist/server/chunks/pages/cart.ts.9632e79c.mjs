@@ -1,46 +1,35 @@
-import type { APIContext } from "astro";
-import { userCartItems } from "../../models/session";
+const userCartItems = /* @__PURE__ */ new Map();
 
-export function get({ cookies }: APIContext) {
+function get({ cookies }) {
   let userId = cookies.get("user-id").value;
-
   if (!userId || !userCartItems.has(userId)) {
     return {
-      body: JSON.stringify({ items: [] }),
+      body: JSON.stringify({ items: [] })
     };
   }
   let items = userCartItems.get(userId);
   let array = Array.from(items.values());
-
   return {
-    body: JSON.stringify({ items: array }),
+    body: JSON.stringify({ items: array })
   };
 }
-
-interface AddToCartItem {
-  id: number;
-  name: string;
-}
-
-export async function post({ cookies, request }: APIContext) {
-  const item: AddToCartItem = await request.json();
-
+async function post({ cookies, request }) {
+  const item = await request.json();
   let userId = cookies.get("user-id").value;
-
   if (!userCartItems.has(userId)) {
-    userCartItems.set(userId, new Map());
+    userCartItems.set(userId, /* @__PURE__ */ new Map());
   }
-
   let cart = userCartItems.get(userId);
   if (cart.has(item.id)) {
     cart.get(item.id).count++;
   } else {
     cart.set(item.id, { id: item.id, name: item.name, count: 1 });
   }
-
   return {
     body: JSON.stringify({
-      ok: true,
-    }),
+      ok: true
+    })
   };
 }
+
+export { get, post };
