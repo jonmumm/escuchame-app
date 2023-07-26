@@ -1,4 +1,4 @@
-import { APIContext } from 'astro';
+import type { APIContext } from 'astro';
 import { userCartItems } from '../../models/session';
 
 export function get({ cookies }: APIContext) {
