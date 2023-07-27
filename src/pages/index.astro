@@ -4,7 +4,6 @@ import db from "../db";
 import { users } from "../schema";
 
 const allUsers = await db.select().from(users);
-
 console.log({ allUsers });
 ---
 
@@ -24,5 +23,4 @@ console.log({ allUsers });
   <body>
     <h2 class="product-listing-title" slot="title">Product Listing</h2>
   </body>
-</html>
-../schema
+</html>../schema
