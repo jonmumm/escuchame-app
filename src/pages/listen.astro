@@ -1,24 +1,24 @@
 ---
-import { getProducts } from "../api";
-import "../styles/common.css";
-
-const products = await getProducts(Astro.request);
+// import the necessary functions and services
+import Flashcard from '../components/Flashcard.astro';
+import { getNextCard } from "../services/flashcardService";
+let card = await getNextCard(Astro.request);
 ---
 
-<html lang="en">
+<html>
   <head>
-    <title>Listen</title>
-    <style>
-      h1 {
-        font-size: 36px;
-      }
-
-      .product-listing-title {
-        text-align: center;
-      }
-    </style>
+    <title>Listen | Escuchame</title>
   </head>
   <body>
-    <h2 class="product-listing-title" slot="title">Listen</h2>
+    {
+      card ? (
+        <>
+          <h1>Next Card</h1>
+          <Flashcard card={card} />
+        </>
+      ) : (
+        <h1>You're done for the day! Come back tomorrow for more.</h1>
+      )
+    }
   </body>
 </html>

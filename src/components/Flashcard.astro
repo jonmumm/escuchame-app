@@ -1,0 +1,17 @@
+---
+// import { revealCard } from '../services/flashcardService';
+// const reveal = async (e) => {
+//   e.preventDefault();
+//   await revealCard(Astro.props.card.id);
+// };
+---
+
+<article>
+  <h2>{Astro.props.card.english}</h2>
+  <audio controls src={Astro.props.card.audioUrl}
+    >Your browser does not support the audio element.</audio
+  >
+  <form method="POST" action={`/respond/${Astro.props.card.id}`}>
+    <button type="submit">Reveal Spanish Translation</button>
+  </form>
+</article>

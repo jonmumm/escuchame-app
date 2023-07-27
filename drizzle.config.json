@@ -1,0 +1,8 @@
+{
+  "schema": "./src/schema.ts",
+  "out": "./drizzle",
+  "driver": "pg",
+  "dbCredentials": {
+    "connectionString": "postgres://postgres:password@localhost:5432"
+  }
+}

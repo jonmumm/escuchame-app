@@ -1,8 +1,11 @@
 ---
-import { getProducts } from "../api";
 import "../styles/common.css";
+import db from "../db";
+import { users } from "../schema";
 
-const products = await getProducts(Astro.request);
+const allUsers = await db.select().from(users);
+
+console.log({ allUsers });
 ---
 
 <html lang="en">
@@ -22,3 +25,4 @@ const products = await getProducts(Astro.request);
     <h2 class="product-listing-title" slot="title">Product Listing</h2>
   </body>
 </html>
+../schema

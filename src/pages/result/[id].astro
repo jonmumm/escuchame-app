@@ -1,0 +1,47 @@
+---
+// Import the required functions
+import {
+  getCardById,
+  getNextCard,
+  getUserResponse,
+} from "../../services/flashcardService";
+import { assertNotNull } from "../../utils";
+
+// Extract the ID from the URL
+const cardId = Astro.params.id;
+assertNotNull(cardId);
+
+// Fetch the card information
+const card = await getCardById(cardId);
+
+// Fetch the user's response to the card
+const userResponse = await getUserResponse(cardId);
+
+// Fetch the next card information
+const nextCard = await getNextCard();
+---
+
+<article>
+  <h2>
+    Your Response to "{card.english} = {card.spanish}" was: {userResponse}
+  </h2>
+  <div>
+    <h3>Card History</h3>
+    <p>To-Do: Display the history of the user's responses to this card.</p>
+  </div>
+  <div>
+    {
+      nextCard ? (
+        <div>
+          <h3>Next Card: "{nextCard.english}"</h3>
+          <a href={`/listen/${nextCard.id}`}>Go to next card</a>
+        </div>
+      ) : (
+        <div>
+          <h3>You're done for today! Check back tomorrow for more cards.</h3>
+          <a href="/">Go back to Home</a>
+        </div>
+      )
+    }
+  </div>
+</article>

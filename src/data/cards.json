@@ -1,0 +1,14 @@
+[
+  {
+    "id": 1,
+    "english": "Hello",
+    "spanish": "Hola",
+    "audioUrl": "https://example.com/audio1.mp3"
+  },
+  {
+    "id": 2,
+    "english": "Goodbye",
+    "spanish": "Adiós",
+    "audioUrl": "https://example.com/audio2.mp3"
+  }
+]
