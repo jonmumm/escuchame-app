@@ -96,3 +96,5 @@ drizzle/
 
 # Astro output
 dist/
+
+node_modules/

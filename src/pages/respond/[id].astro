@@ -1,22 +1,23 @@
 ---
 // Import the required functions
-import { getCardById } from "../services/flashcardService";
+import { getCardById } from "../../services/flashcardService";
+import { assertNotNull } from "../../utils";
 
 // Extract the ID from the URL
 const cardId = Astro.params.id;
+assertNotNull(cardId);
 
 // Fetch the card information
-const card = await getCardById(cardId);
+const card = await getCardById(parseInt(cardId));
+assertNotNull(card);
 ---
 
 <article>
   <h2>{card.english} = {card.spanish}</h2>
-  <audio controls src={card.audioUrl}
-    >Your browser does not support the audio element.</audio
-  >
+  <audio controls autoplay src={card.audioUrl}></audio>
   <form method="POST" action={`/result/${card.id}`}>
-    <button type="submit" name="response" value="knew">I knew this</button>
-    <button type="submit" name="response" value="didntKnow"
+    <button type="submit" name="response" value="yes">I knew this</button>
+    <button type="submit" name="response" value="no"
       >I didn't know this</button
     >
   </form>

@@ -2,7 +2,7 @@
 // import the necessary functions and services
 import Flashcard from '../components/Flashcard.astro';
 import { getNextCard } from "../services/flashcardService";
-let card = await getNextCard(Astro.request);
+const card = await getNextCard();
 ---
 
 <html>
@@ -13,7 +13,7 @@ let card = await getNextCard(Astro.request);
     {
       card ? (
         <>
-          <h1>Next Card</h1>
+          <h1>Listen</h1>
           <Flashcard card={card} />
         </>
       ) : (

@@ -7,10 +7,7 @@
 ---
 
 <article>
-  <h2>{Astro.props.card.english}</h2>
-  <audio controls src={Astro.props.card.audioUrl}
-    >Your browser does not support the audio element.</audio
-  >
+  <audio controls autoplay src={Astro.props.card.audioUrl} />
   <form method="POST" action={`/respond/${Astro.props.card.id}`}>
     <button type="submit">Reveal Spanish Translation</button>
   </form>

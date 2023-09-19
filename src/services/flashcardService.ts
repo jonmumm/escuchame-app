@@ -1,9 +1,10 @@
+import { eq } from "drizzle-orm";
 import CARDS_DATA from "../data/cards.json";
 import db from "../db";
-import type { NewResponse, Response } from "../schema";
+import { responses, type NewResponse, type Response } from "../schema";
 import { assertNotNull } from "../utils";
 
-type Card = typeof CARDS_DATA[0];
+type Card = (typeof CARDS_DATA)[0];
 
 // Fetch a flashcard by its ID from the JSON data
 export async function getCardById(cardId: number): Promise<Card | undefined> {
@@ -18,13 +19,18 @@ export async function getNextCard(): Promise<Card> {
 }
 
 // Fetch the user's response to a flashcard
-export async function getUserResponse(cardId: number, sessionId: number): Promise<Response> {
+export async function getUserResponse(
+  cardId: number,
+  sessionId: number
+): Promise<Response> {
   const response: Response[] = await db
     .select()
-    .from("responses")
-    .where("cardId", cardId)
-    .andWhere("sessionId", sessionId);
-  return assertNotNull(response[0]);
+    .from(responses)
+    .where(eq(responses.cardId, cardId))
+    .where(eq(responses.sessionId, sessionId));
+  const res = response[0];
+  assertNotNull(res);
+  return res;
 }
 
 // Save the user's response to a flashcard

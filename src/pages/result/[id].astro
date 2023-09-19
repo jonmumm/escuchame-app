@@ -1,21 +1,22 @@
 ---
 // Import the required functions
-import {
-  getCardById,
-  getNextCard,
-  getUserResponse,
-} from "../../services/flashcardService";
+import { getCardById, getNextCard } from "../../services/flashcardService";
 import { assertNotNull } from "../../utils";
+
+const data = await Astro.request.formData();
+const response = data.get("response");
+assertNotNull(response);
 
 // Extract the ID from the URL
 const cardId = Astro.params.id;
 assertNotNull(cardId);
 
 // Fetch the card information
-const card = await getCardById(cardId);
+const card = await getCardById(parseInt(cardId));
+assertNotNull(card);
 
-// Fetch the user's response to the card
-const userResponse = await getUserResponse(cardId);
+// // Fetch the user's response to the card
+// const userResponse = await getUserResponse(parseInt(cardId));
 
 // Fetch the next card information
 const nextCard = await getNextCard();
@@ -23,7 +24,7 @@ const nextCard = await getNextCard();
 
 <article>
   <h2>
-    Your Response to "{card.english} = {card.spanish}" was: {userResponse}
+    Your Response to "{card.english} = {card.spanish}" was: {response}
   </h2>
   <div>
     <h3>Card History</h3>
@@ -33,8 +34,7 @@ const nextCard = await getNextCard();
     {
       nextCard ? (
         <div>
-          <h3>Next Card: "{nextCard.english}"</h3>
-          <a href={`/listen/${nextCard.id}`}>Go to next card</a>
+          <a href={`/listen`}>Go to next card</a>
         </div>
       ) : (
         <div>
