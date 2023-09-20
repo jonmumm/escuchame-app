@@ -1,21 +1,35 @@
 import type { MiddlewareResponseHandler } from "astro";
 import { defineMiddleware, sequence } from "astro/middleware";
+import crypto from "crypto";
+import * as JWT from "jsonwebtoken";
+import db from "./db";
+import { users } from "./schema";
+import { assertNotNull } from "./utils";
 
-const corsHandler: MiddlewareResponseHandler = defineMiddleware(
-  async (_, next) => {
-    const corsHeaders = {
-      "Access-Control-Allow-Origin": "*", // Allow any origin
-    };
+const privateKey = "my_private_key";
 
-    const response = await next();
+const sessionMiddleware: MiddlewareResponseHandler = defineMiddleware(
+  async ({ locals, cookies }, next) => {
+    let sessionToken = cookies.get("sessionToken").value;
+    if (!sessionToken) {
+      const userId = crypto.randomUUID();
 
-    for (const [key, value] of Object.entries(corsHeaders)) {
-      response.headers.append(key, value);
+      await db.insert(users).values({ id: userId });
+
+      sessionToken = JWT.sign({}, privateKey, {
+        subject: userId,
+      });
+      cookies.set("sessionToken", sessionToken);
     }
 
-    return response;
+    const parsed = JWT.verify(sessionToken, privateKey);
+    const userId = parsed.sub as string | undefined;
+    assertNotNull(userId);
+    locals.userId = userId;
+
+    return next();
   }
 );
 
 // Export the middleware using sequence
-export const onRequest = sequence(corsHandler);
+export const onRequest = sequence(sessionMiddleware);

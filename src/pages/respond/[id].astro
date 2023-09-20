@@ -13,12 +13,14 @@ assertNotNull(card);
 ---
 
 <article>
-  <h2>{card.english} = {card.spanish}</h2>
+  <h1>{card.spanish}</h1>
+  <h2>{card.english}</h2>
   <audio controls autoplay src={card.audioUrl}></audio>
   <form method="POST" action={`/result/${card.id}`}>
-    <button type="submit" name="response" value="yes">I knew this</button>
-    <button type="submit" name="response" value="no"
-      >I didn't know this</button
-    >
+    <label>Correct?</label>
+    <fieldset>
+      <button type="submit" name="response" value="yes">Yes</button>
+      <button type="submit" name="response" value="no">No</button>
+    </fieldset>
   </form>
 </article>

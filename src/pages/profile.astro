@@ -1,0 +1,66 @@
+---
+import { eq } from "drizzle-orm";
+import db from "../db";
+import { users } from "../schema";
+import "../styles/common.css";
+import { assertNotNull } from "../utils";
+import { z } from "zod";
+
+const EmailSchema = z.string().email();
+
+if (Astro.request.method === "POST") {
+  try {
+    const data = await Astro.request.formData();
+    const email = EmailSchema.parse(data.get("email"));
+    console.log("updating", email);
+
+    await db
+      .update(users)
+      .set({ email })
+      .where(eq(users.id, Astro.locals.userId));
+    console.log("updated", email);
+  } catch (error) {
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+}
+
+const results = await db
+  .select()
+  .from(users)
+  .where(eq(users.id, Astro.locals.userId));
+
+assertNotNull(results);
+const user = results[0];
+
+const { email } = user;
+
+console.log({ email });
+---
+
+<html lang="en">
+  <head>
+    <title>Profile</title>
+  </head>
+  <body>
+    <h1>Profile</h1>
+    <p>Provide an email to save your progress.</p>
+    {
+      email ? (
+        <div>{email}</div>
+      ) : (
+        <form method="POST">
+          <label for="email">Email</label>
+          <input
+            required
+            name="email"
+            type="email"
+            placeholder="example@gmail.com"
+          />
+          <button>Submit</button>
+        </form>
+      )
+    }
+  </body>
+</html>

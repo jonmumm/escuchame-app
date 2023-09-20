@@ -1,17 +1,17 @@
-import { pgTable, text, timestamp, integer, bigserial } from 'drizzle-orm/pg-core';
+import { pgTable, text, timestamp, integer, uuid } from 'drizzle-orm/pg-core';
 import type { InferModel } from 'drizzle-orm';
 
 export const users = pgTable("users", {
-  id: bigserial("id", { mode: "number" }).primaryKey(),
-  email: text("email").notNull().unique(),
+  id: uuid("id").primaryKey(),
+  email: text("email").unique(),
 });
 
 export type User = InferModel<typeof users>;
 export type NewUser = InferModel<typeof users, "insert">;
 
 export const sessions = pgTable("sessions", {
-  id: bigserial("id", { mode: "number" }).primaryKey(),
-  userId: bigserial("user_id", { mode: "number" }).references(() => users.id),
+  id: uuid("id").primaryKey(),
+  userId: uuid("user_id").references(() => users.id),
   startedAt: timestamp("started_at").defaultNow().notNull(),
 });
 
@@ -19,8 +19,8 @@ export type Session = InferModel<typeof sessions>;
 export type NewSession = InferModel<typeof sessions, "insert">;
 
 export const responses = pgTable("responses", {
-  id: bigserial("id", { mode: "number" }).primaryKey(),
-  sessionId: bigserial("session_id", { mode: "number" }).references(() => sessions.id),
+  id: uuid("id").primaryKey(),
+  sessionId: uuid("session_id").references(() => sessions.id),
   cardId: integer("card_id").notNull(),
   value: integer('value').notNull(),
 });

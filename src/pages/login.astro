@@ -12,7 +12,6 @@
 
     <script type="module" is:inline>
       document.addEventListener("DOMContentLoaded", () => {
-        console.log("loaded");
         document.querySelector("form").addEventListener("submit", (e) => {
           e.preventDefault();
           const form = e.target;
@@ -44,18 +43,5 @@
 
       <input type="submit" value="Submit" />
     </form>
-    <!-- <Container tag="main">
-			<h1>Login</h1>
-			<form action="/login.form" method="POST">
-				<label for="name">Name</label>
-				<input type="text" name="name" />
-
-				<label for="password">Password</label>
-				<input type="password" name="password" />
-
-				<input type="submit" value="Submit" />
-			</form>
-			<div id="result"></div>
-		</Container> -->
   </body>
 </html>
