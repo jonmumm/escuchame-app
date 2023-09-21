@@ -57,9 +57,9 @@ export async function getCurrentReview(sessionId: string) {
   return newRow;
 }
 
-// Fetch a flashcard by its ID from the JSON data
+// Gets the card id that is the most percent overdue
+// If there are no cards that are overdue, uses the users
 export async function getNextCardId(userId: string) {
-  // for now just use a random card
   const index = Math.floor(Math.random() * (cards.length - 1));
   return cards[index].id;
 }
