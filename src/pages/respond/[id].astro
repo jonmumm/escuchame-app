@@ -1,26 +1,49 @@
 ---
 // Import the required functions
-import { getCardById } from "../../services/flashcardService";
+import { eq } from "drizzle-orm";
+import db from "../../db";
+import { reviews } from "../../schema";
+import { getCardById, getAudioUrl } from "../../services/flashcardService";
 import { assertNotNull } from "../../utils";
 
 // Extract the ID from the URL
-const cardId = Astro.params.id;
-assertNotNull(cardId);
+const reviewId = Astro.params.id;
+assertNotNull(reviewId);
+
+const [review] = await db
+  .select()
+  .from(reviews)
+  .where(eq(reviews.id, reviewId));
+assertNotNull(review);
+const { cardId, voiceId } = review;
+console.log({ cardId });
 
 // Fetch the card information
-const card = await getCardById(parseInt(cardId));
+const card = await getCardById(cardId);
 assertNotNull(card);
+
+const audioUrl = getAudioUrl(card.id, review.voiceId);
 ---
 
 <article>
-  <h1>{card.spanish}</h1>
+  <h1 class="text-3xl font-bold">{card.spanish}</h1>
   <h2>{card.english}</h2>
-  <audio controls autoplay src={card.audioUrl}></audio>
-  <form method="POST" action={`/result/${card.id}`}>
+  <audio controls src={audioUrl}></audio>
+  <form method="POST" action={`/result/${review.id}`}>
     <label>Correct?</label>
     <fieldset>
-      <button type="submit" name="response" value="yes">Yes</button>
-      <button type="submit" name="response" value="no">No</button>
+      <button
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        type="submit"
+        name="response"
+        value="yes">Yes</button
+      >
+      <button
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+        type="submit"
+        name="response"
+        value="no">No</button
+      >
     </fieldset>
   </form>
 </article>

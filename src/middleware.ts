@@ -3,8 +3,8 @@ import { defineMiddleware, sequence } from "astro/middleware";
 import crypto from "crypto";
 import * as JWT from "jsonwebtoken";
 import db from "./db";
-import { users } from "./schema";
-import { assertNotNull } from "./utils";
+import { sessions, users } from "./schema";
+import { assert, assertNotNull } from "./utils";
 
 const privateKey = "my_private_key";
 
@@ -13,19 +13,38 @@ const sessionMiddleware: MiddlewareResponseHandler = defineMiddleware(
     let sessionToken = cookies.get("sessionToken").value;
     if (!sessionToken) {
       const userId = crypto.randomUUID();
+      const sessionId = crypto.randomUUID();
 
+      console.log("isnerrting", userId, sessionId);
       await db.insert(users).values({ id: userId });
-
-      sessionToken = JWT.sign({}, privateKey, {
-        subject: userId,
+      await db.insert(sessions).values({
+        id: sessionId,
+        userId: userId,
       });
+
+      sessionToken = JWT.sign(
+        {
+          userId,
+        },
+        privateKey,
+        {
+          subject: sessionId,
+        }
+      );
+
       cookies.set("sessionToken", sessionToken);
     }
 
     const parsed = JWT.verify(sessionToken, privateKey);
-    const userId = parsed.sub as string | undefined;
-    assertNotNull(userId);
-    locals.userId = userId;
+    const sessionId = parsed.sub as string | undefined;
+    assertNotNull(sessionId);
+    assert(
+      typeof parsed === "object" && "userId" in parsed,
+      "expeced userId in sessionToken"
+    );
+
+    locals.userId = parsed.userId;
+    locals.sessionId = sessionId;
 
     return next();
   }

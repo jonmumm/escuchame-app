@@ -7,7 +7,7 @@ dotenv.config();
 
 // your actual PostgreSQL connection string
 const connectionString =
-  process.env.DB_CONNECTION || "postgres://postgres:password@localhost:5433/postgres";
+  process.env.DB_CONNECTION || "postgres://postgres:password@localhost:5434/postgres";
 
 // for query purposes
 const queryClient = postgres(connectionString);

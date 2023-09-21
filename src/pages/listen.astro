@@ -1,8 +1,9 @@
 ---
-// import the necessary functions and services
-import Flashcard from '../components/Flashcard.astro';
-import { getNextCard } from "../services/flashcardService";
-const card = await getNextCard();
+import Flashcard from "../components/Flashcard.astro";
+import { getCardById, getCurrentReview } from "../services/flashcardService";
+
+const review = await getCurrentReview(Astro.locals.sessionId);
+const card = await getCardById(review.cardId);
 ---
 
 <html>
@@ -14,7 +15,11 @@ const card = await getNextCard();
       card ? (
         <>
           <h1>Listen</h1>
-          <Flashcard card={card} />
+          <Flashcard
+            reviewId={review.id}
+            cardId={review.cardId}
+            voiceId={review.voiceId}
+          />
         </>
       ) : (
         <h1>You're done for the day! Come back tomorrow for more.</h1>

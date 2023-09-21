@@ -6,3 +6,12 @@ export function assertNotNull<T>(
     throw new Error(message);
   }
 }
+
+export function assert<T>(
+  expression: T,
+  errorMessage: string
+): asserts expression {
+  if (!expression) {
+    throw new Error(errorMessage);
+  }
+}

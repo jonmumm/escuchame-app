@@ -1,10 +1,5 @@
 ---
 import "../styles/common.css";
-import db from "../db";
-import { users } from "../schema";
-
-const allUsers = await db.select().from(users);
-console.log({ allUsers });
 ---
 
 <html lang="en">
@@ -22,6 +17,9 @@ console.log({ allUsers });
   </head>
   <body>
     <img alt="Escuchame app" src="escuchame.svg" />
-    <a href="/listen">Start</a>
+    <a
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+      href="/listen">Start</a
+    >
   </body>
 </html>

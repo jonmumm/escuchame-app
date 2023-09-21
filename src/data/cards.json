@@ -1,14 +1,52 @@
 [
   {
-    "id": 1,
-    "english": "Hello",
-    "spanish": "Hola",
-    "audioUrl": "https://example.com/audio1.mp3"
+    "id": "e34c15d1-4b8f-402c-9a25-0f7e7b96a001",
+    "english": "I love traveling to exotic places.",
+    "spanish": "Me encanta viajar a lugares exóticos."
   },
   {
-    "id": 2,
-    "english": "Goodbye",
-    "spanish": "Adiós",
-    "audioUrl": "https://example.com/audio2.mp3"
+    "id": "f20e7b89-6c4d-42e0-a8a7-3d96e8c4f002",
+    "english": "Learning a new language is challenging but rewarding.",
+    "spanish": "Aprender un nuevo idioma es desafiante pero gratificante."
+  },
+  {
+    "id": "d9a8c2e3-0f1b-4c5d-9e6f-7a8c3d0e3003",
+    "english": "I enjoy reading classic Spanish literature.",
+    "spanish": "Disfruto leyendo literatura clásica española."
+  },
+  {
+    "id": "b4c3a6d9-8e7f-1d0f-3e2c-4b5a6c8d4004",
+    "english": "Exploring ancient ruins fascinates me.",
+    "spanish": "Explorar ruinas antiguas me fascina."
+  },
+  {
+    "id": "8c9d2e3f-4a5b-6c7d-1e0f-5a6b8c9d5005",
+    "english": "I want to become fluent in Spanish.",
+    "spanish": "Quiero llegar a ser fluido en español."
+  },
+  {
+    "id": "1a2b3c4d-5e6f-7a8b-9c0d-2e3f4a5b6006",
+    "english": "Studying Spanish culture is a passion of mine.",
+    "spanish": "Estudiar la cultura española es una pasión mía."
+  },
+  {
+    "id": "7e8f9a0b-1c2d-3e4f-5a6b-6c7d8e9f7007",
+    "english": "I dream of living in Spain one day.",
+    "spanish": "Sueño con vivir en España algún día."
+  },
+  {
+    "id": "0d1e2f3a-4b5c-6d7e-8f9a-0b1c2d3e8008",
+    "english": "I can understand most Spanish movies without subtitles.",
+    "spanish": "Puedo entender la mayoría de las películas españolas sin subtítulos."
+  },
+  {
+    "id": "9a0b1c2d-3e4f-5a6b-7c8d-9e0f1a2b9009",
+    "english": "Traveling has broadened my cultural horizons.",
+    "spanish": "Viajar ha ampliado mis horizontes culturales."
+  },
+  {
+    "id": "3e4f5a6b-7c8d-9e0f-1a2b-0c1d2e3f9010",
+    "english": "I hope to visit all the Spanish-speaking countries.",
+    "spanish": "Espero visitar todos los países de habla hispana."
   }
 ]

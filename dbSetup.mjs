@@ -4,7 +4,7 @@ import postgres from 'postgres';
 
 (async () => {
   // Create the connection
-  const sql = postgres("postgres://postgres:password@0.0.0.0:5433/postgres");
+  const sql = postgres("postgres://postgres:password@0.0.0.0:5434/postgres");
 
   const db = drizzle(sql);
 
