@@ -1,7 +1,7 @@
 import type { MiddlewareResponseHandler } from "astro";
 import { defineMiddleware, sequence } from "astro/middleware";
 import crypto from "crypto";
-import * as JWT from "jsonwebtoken";
+import { sign, verify } from "jsonwebtoken";
 import db from "./db";
 import { sessions, users } from "./schema";
 import { assert, assertNotNull } from "./utils";
@@ -15,14 +15,13 @@ const sessionMiddleware: MiddlewareResponseHandler = defineMiddleware(
       const userId = crypto.randomUUID();
       const sessionId = crypto.randomUUID();
 
-      console.log("isnerrting", userId, sessionId);
       await db.insert(users).values({ id: userId });
       await db.insert(sessions).values({
         id: sessionId,
         userId: userId,
       });
 
-      sessionToken = JWT.sign(
+      sessionToken = sign(
         {
           userId,
         },
@@ -35,7 +34,7 @@ const sessionMiddleware: MiddlewareResponseHandler = defineMiddleware(
       cookies.set("sessionToken", sessionToken);
     }
 
-    const parsed = JWT.verify(sessionToken, privateKey);
+    const parsed = verify(sessionToken, privateKey);
     const sessionId = parsed.sub as string | undefined;
     assertNotNull(sessionId);
     assert(
