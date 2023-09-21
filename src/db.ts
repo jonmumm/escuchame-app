@@ -6,8 +6,7 @@ import { users, sessions, responses } from "./schema";
 dotenv.config();
 
 // your actual PostgreSQL connection string
-const connectionString =
-  process.env.DB_CONNECTION || "postgres://postgres:password@localhost:5434/postgres";
+const connectionString = process.env.DATABASE_URL;
 
 // for query purposes
 const queryClient = postgres(connectionString);

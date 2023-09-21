@@ -10,7 +10,7 @@ const privateKey = "my_private_key";
 
 const sessionMiddleware: MiddlewareResponseHandler = defineMiddleware(
   async ({ locals, cookies }, next) => {
-    let sessionToken = cookies.get("sessionToken").value;
+    let sessionToken = cookies.get("sessionToken")?.value;
     if (!sessionToken) {
       const userId = crypto.randomUUID();
       const sessionId = crypto.randomUUID();
