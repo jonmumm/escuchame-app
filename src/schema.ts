@@ -1,13 +1,22 @@
 import type { InferModel } from "drizzle-orm";
 import {
+  customType,
   integer,
   pgTable,
+  primaryKey,
   real,
   text,
   timestamp,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+import { assert } from "./utils";
+
+const bytea = customType<{ data: Buffer; notNull: false; default: false }>({
+  dataType() {
+    return "bytea";
+  },
+});
 
 export const users = pgTable("users", {
   id: uuid("id").primaryKey(),
@@ -28,6 +37,22 @@ export const sessions = pgTable("sessions", {
 export type Session = InferModel<typeof sessions>;
 export type NewSession = InferModel<typeof sessions, "insert">;
 
+export const voiceTracks = pgTable(
+  "voice_tracks",
+  {
+    cardId: uuid("card_id").notNull(),
+    voiceId: varchar("voice_id").notNull(),
+    data: bytea("data").notNull(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => {
+    return {
+      pk: primaryKey(table.cardId, table.voiceId),
+    };
+  }
+);
+export type VoiceTrack = InferModel<typeof voiceTracks>;
+
 export const reviews = pgTable("reviews", {
   id: uuid("id").primaryKey(),
   sessionId: uuid("session_id")
@@ -43,19 +68,6 @@ export const reviews = pgTable("reviews", {
   submittedAt: timestamp("submitted_at").defaultNow().notNull(),
 });
 export type Review = InferModel<typeof reviews>;
-
-export const responses = pgTable("responses", {
-  id: uuid("id").primaryKey(),
-  sessionId: uuid("session_id").references(() => sessions.id),
-  userId: uuid("user_id").references(() => users.id),
-  cardId: uuid("card_id").notNull(),
-  voiceId: varchar("voice_id").notNull(),
-  value: integer("value").notNull(),
-  submittedAt: timestamp("submitted_at").defaultNow().notNull(),
-});
-
-export type Response = InferModel<typeof responses>;
-export type NewResponse = InferModel<typeof responses, "insert">;
 
 export const cardsProgress = pgTable("cards_progress", {
   userId: uuid("user_id").references(() => users.id),
