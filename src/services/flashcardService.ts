@@ -2,11 +2,7 @@ import { eq, isNull } from "drizzle-orm";
 import cards from "../data/cards.json";
 import voices from "../data/voices.json";
 import db from "../db";
-import {
-  reviews,
-  type Review,
-  sessions,
-} from "../schema";
+import { reviews, type Review, sessions } from "../schema";
 import { assertNotNull } from "../utils";
 import type { Card } from "../types";
 
@@ -60,8 +56,13 @@ export async function getNextCardId(userId: string) {
   return cards[index].id;
 }
 
+const cardsById: Record<string, Card> = {};
+cards.forEach((card) => {
+  cardsById[card.id] = card;
+});
+
 export async function getCardById(cardId: string): Promise<Card> {
-  const card = cards.find((card: Card) => card.id === cardId);
+  const card = cardsById[cardId];
   if (!card) {
     throw new Error("couldn't find card " + cardId);
   }

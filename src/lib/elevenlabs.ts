@@ -1,14 +1,8 @@
 import { z } from "astro/zod";
 import { and, eq } from "drizzle-orm";
-import cards from "../data/cards.json" assert { type: "json" };
 import db from "../db";
 import { voiceTracks } from "../schema";
-import type { Card } from "../types";
-
-const cardsById: Record<string, Card> = {};
-cards.forEach((card) => {
-  cardsById[card.id] = card;
-});
+import { getCardById } from "../services/flashcardService";
 
 const envSchema = z.object({
   ELEVENLABS_API_KEY: z.string(),
@@ -58,7 +52,7 @@ export const maybeCreateVoiceTrack = async (
     .select()
     .from(voiceTracks)
     .where(
-      and(eq(voiceTracks.cardId, card.id), eq(voiceTracks.voiceId, voiceId))
+      and(eq(voiceTracks.cardId, cardId), eq(voiceTracks.voiceId, voiceId))
     );
 
   if (res) {
@@ -70,7 +64,7 @@ export const maybeCreateVoiceTrack = async (
 };
 
 export const createVoiceTrack = async (cardId: string, voiceId: string) => {
-  const card = cardsById[cardId];
+  const card = await getCardById(cardId);
 
   const resp = await getVoiceTrack(voiceId, card.spanish);
   const data = (await resp.arrayBuffer()) as any;
