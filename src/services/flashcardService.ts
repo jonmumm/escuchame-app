@@ -3,11 +3,7 @@ import cards from "../data/cards.json";
 import voices from "../data/voices.json";
 import db from "../db";
 import {
-  responses,
   reviews,
-  type NewResponse,
-  type Response,
-  cardsProgress,
   type Review,
   sessions,
 } from "../schema";
@@ -62,21 +58,6 @@ export async function getCurrentReview(sessionId: string) {
 export async function getNextCardId(userId: string) {
   const index = Math.floor(Math.random() * (cards.length - 1));
   return cards[index].id;
-}
-
-// Fetch the user's response to a flashcard
-export async function getUserResponse(
-  cardId: string,
-  sessionId: string
-): Promise<Response> {
-  const response: Response[] = await db
-    .select()
-    .from(responses)
-    .where(eq(responses.cardId, cardId))
-    .where(eq(responses.sessionId, sessionId));
-  const res = response[0];
-  assertNotNull(res);
-  return res;
 }
 
 export async function getCardById(cardId: string): Promise<Card> {

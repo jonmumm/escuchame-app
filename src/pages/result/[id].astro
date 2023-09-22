@@ -32,9 +32,6 @@ const { cardId } = review;
 const card = await getCardById(cardId);
 assertNotNull(card);
 
-// // Fetch the user's response to the card
-// const userResponse = await getUserResponse(parseInt(cardId));
-
 // Fetch the next card information
 const nextCardId = await getNextCardId(Astro.locals.userId);
 ---
