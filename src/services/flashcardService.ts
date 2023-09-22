@@ -67,19 +67,3 @@ export async function getCardById(cardId: string): Promise<Card> {
   }
   return card;
 }
-
-function getRandomElement<T>(list: T[]): T | undefined {
-  if (list.length === 0) {
-    return undefined; // Return undefined if the list is empty
-  }
-
-  const randomIndex = Math.floor(Math.random() * list.length);
-  return list[randomIndex];
-}
-function getNewCardForUser(userId: string) {
-  throw new Error("Function not implemented.");
-}
-
-function queryOrderedCardsForUser(userId: string) {
-  throw new Error("Function not implemented.");
-}

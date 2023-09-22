@@ -1,11 +1,14 @@
-// Example usage:
-// getVoiceTrack('21m00Tcm4TlvDq8ikWAM', 'hola me llamo juan').then(data => {
-//   if (data) {
-//     // Handle the audio data here...
-//   }
-// });
-
 import { z } from "astro/zod";
+import { and, eq } from "drizzle-orm";
+import cards from "../data/cards.json" assert { type: "json" };
+import db from "../db";
+import { voiceTracks } from "../schema";
+import type { Card } from "../types";
+
+const cardsById: Record<string, Card> = {};
+cards.forEach((card) => {
+  cardsById[card.id] = card;
+});
 
 const envSchema = z.object({
   ELEVENLABS_API_KEY: z.string(),
@@ -46,3 +49,35 @@ export async function getVoiceTrack(
 
   return response;
 }
+
+export const maybeCreateVoiceTrack = async (
+  cardId: string,
+  voiceId: string
+) => {
+  const [res] = await db
+    .select()
+    .from(voiceTracks)
+    .where(
+      and(eq(voiceTracks.cardId, card.id), eq(voiceTracks.voiceId, voiceId))
+    );
+
+  if (res) {
+    return false;
+  }
+
+  createVoiceTrack(cardId, voiceId);
+  return true;
+};
+
+export const createVoiceTrack = async (cardId: string, voiceId: string) => {
+  const card = cardsById[cardId];
+
+  const resp = await getVoiceTrack(voiceId, card.spanish);
+  const data = (await resp.arrayBuffer()) as any;
+
+  await db.insert(voiceTracks).values({
+    cardId: card.id,
+    voiceId,
+    data,
+  });
+};
