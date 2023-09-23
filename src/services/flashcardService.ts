@@ -14,7 +14,7 @@ export const getAudioUrl = (cardId: string, voiceId: string) => {
 
 export async function getCurrentReview(
   _db: PostgresJsDatabase,
-  sessionId: string
+  sessionId: string,
 ) {
   const [row] = await _db
     .select()
@@ -26,7 +26,7 @@ export async function getCurrentReview(
 
 async function getUserIdFromSession(
   _db: PostgresJsDatabase,
-  sessionId: string
+  sessionId: string,
 ) {
   const [row] = await _db
     .select()
@@ -46,7 +46,7 @@ async function getCurrentQueueSize(_db: PostgresJsDatabase, sessionId: string) {
 
 async function getOverdueCardIds(
   _db: PostgresJsDatabase,
-  userId: string
+  userId: string,
 ): Promise<string[]> {
   const today = new Date();
   const overdueCardIds: string[] = [];
@@ -73,7 +73,7 @@ async function getOverdueCardIds(
 export async function arrangeReviewQueue(
   _db: PostgresJsDatabase,
   sessionId: string,
-  queueSize: number
+  queueSize: number,
 ) {
   // 1. Fetch user ID from session ID
   const userId = await getUserIdFromSession(_db, sessionId);
@@ -112,7 +112,7 @@ export async function arrangeReviewQueue(
 export async function addToReviewQueue(
   _db: PostgresJsDatabase,
   sessionId: string,
-  cardId: string
+  cardId: string,
 ): Promise<void> {
   // Generate a unique ID for the new review
   const id = crypto.randomUUID();
@@ -126,14 +126,14 @@ export async function addToReviewQueue(
   // Count the number of previously seen reviews
   _db.transaction(async (tx) => {
     const [countQueryRow] = await tx
-      .select({ count: sql<number>`count(*)` })
+      .select({ count: sql<number>`count(*)::int` })
       .from(reviews)
       .where(
         and(
           eq(reviews.userId, userId),
           eq(reviews.cardId, cardId),
-          isNotNull(reviews.submittedAt)
-        )
+          isNotNull(reviews.submittedAt),
+        ),
       );
     const previouslySeenCount = countQueryRow.count;
 
@@ -157,7 +157,7 @@ const NUM_CARDS_TO_LEARN_INDEX = 25; // number of cards we use to adjust the lea
 export async function getNewCards(
   _db: PostgresJsDatabase,
   userId: string,
-  cardsToAdd: number
+  cardsToAdd: number,
 ): Promise<string[]> {
   // 1. Get the average first-time success rate
   const successRate = await getNewCardSuccessRate(_db, userId);
@@ -233,7 +233,7 @@ async function get(_db: PostgresJsDatabase, userId: string): Promise<number> {
 
 async function getAverageCompletedDifficulty(
   _db: PostgresJsDatabase,
-  userId: string
+  userId: string,
 ): Promise<number> {
   const [row] = await _db
     .select({ avg: sql<number>`avg(difficulty)` })
@@ -245,7 +245,7 @@ async function getAverageCompletedDifficulty(
 
 async function getNumberOfCardsSeen(
   _db: PostgresJsDatabase,
-  userId: string
+  userId: string,
 ): Promise<number> {
   const [row] = await _db
     .select({ count: sql<number>`count(*)::int` })
@@ -256,7 +256,7 @@ async function getNumberOfCardsSeen(
 
 async function getAverageCompletedIndex(
   _db: PostgresJsDatabase,
-  userId: string
+  userId: string,
 ): Promise<number> {
   const result = await _db
     .select()
@@ -268,7 +268,7 @@ async function getAverageCompletedIndex(
 
 async function getCompletedCardIds(
   _db: PostgresJsDatabase,
-  userId: string
+  userId: string,
 ): Promise<string[]> {
   const result = await _db
     .select()
@@ -368,14 +368,14 @@ export async function updateCardProgress(
   db: PostgresJsDatabase,
   cardId: string,
   userId: string,
-  performanceRating: number
+  performanceRating: number,
 ): Promise<void> {
   // Fetch card's current progress
   const [cardProgress] = await db
     .select()
     .from(cardsProgress)
     .where(
-      and(eq(cardsProgress.cardId, cardId), eq(cardsProgress.userId, userId))
+      and(eq(cardsProgress.cardId, cardId), eq(cardsProgress.userId, userId)),
     );
 
   let difficulty: number;
@@ -430,7 +430,7 @@ export async function updateCardProgress(
         dateLastReviewed,
       })
       .where(
-        and(eq(cardsProgress.cardId, cardId), eq(cardsProgress.userId, userId))
+        and(eq(cardsProgress.cardId, cardId), eq(cardsProgress.userId, userId)),
       );
   } else {
     // Create an initial entry in the database
@@ -452,8 +452,8 @@ async function getNewCardSuccessRate(_db: PostgresJsDatabase, userId: string) {
       and(
         eq(reviews.userId, userId),
         eq(reviews.previouslySeenCount, 0),
-        isNotNull(reviews.value)
-      )
+        isNotNull(reviews.value),
+      ),
     );
 
   return userReviews.length
@@ -469,8 +469,8 @@ async function getLastNewCardIndex(_db: PostgresJsDatabase, userId: string) {
       and(
         eq(reviews.userId, userId),
         eq(reviews.previouslySeenCount, 0),
-        isNotNull(reviews.submittedAt)
-      )
+        isNotNull(reviews.submittedAt),
+      ),
     )
     .orderBy(desc(reviews.submittedAt))
     .limit(1);
@@ -484,7 +484,7 @@ async function getLastNewCardIndex(_db: PostgresJsDatabase, userId: string) {
 
 export async function predictSuccessProbabilities(
   _db: PostgresJsDatabase,
-  userId: string
+  userId: string,
 ): Promise<Record<string, number>> {
   // Fetch the user's first-time responses (previously_seen_count = 0 and not null value)
   const userResponses = await _db
@@ -494,8 +494,8 @@ export async function predictSuccessProbabilities(
       and(
         eq(reviews.userId, userId),
         eq(reviews.previouslySeenCount, 0),
-        isNotNull(reviews.value)
-      )
+        isNotNull(reviews.value),
+      ),
     );
 
   const seenCardIds = new Set(userResponses.map((review) => review.cardId));
