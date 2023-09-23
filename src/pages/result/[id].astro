@@ -50,6 +50,12 @@ assertNotNull(card);
 
 // Fetch the next card information
 const currentReview = await getCurrentReview(db, Astro.locals.sessionId);
+
+if (currentReview) {
+  return Astro.redirect("/listen");
+}
+
+// Only render below if there are no current reviews...
 ---
 
 <MainLayout title="Result">
@@ -62,23 +68,10 @@ const currentReview = await getCurrentReview(db, Astro.locals.sessionId);
     <p>To-Do: Display the history of the user's responses to this card.</p>
     </div> -->
     <div>
-      {
-        currentReview ? (
-          <div>
-            <a
-              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-              href={`/listen`}
-            >
-              Go to next card
-            </a>
-          </div>
-        ) : (
-          <div>
-            <h3>You're done for today! Check back tomorrow for more cards.</h3>
-            <a href="/">Go back to Home</a>
-          </div>
-        )
-      }
+      <div>
+        <h3>You're done for today! Check back tomorrow for more cards.</h3>
+        <a href="/">Go back to Home</a>
+      </div>
     </div>
   </article>
 </MainLayout>
