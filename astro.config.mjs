@@ -8,10 +8,7 @@ import tailwind from "@astrojs/tailwind";
 export default defineConfig({
   output: "server",
   adapter: node({
-    mode: "standalone"
+    mode: "standalone",
   }),
   integrations: [react(), tailwind()],
-  server: {
-    host: "0.0.0.0"
-  }
 });
