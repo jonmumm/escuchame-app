@@ -13,8 +13,8 @@ console.log({ connectionString });
 
 // for query purposes
 const queryClient = postgres(connectionString);
+console.log({ queryClient });
 const db: PostgresJsDatabase = drizzle(queryClient);
-
 console.log({ db });
 
 // now you can use db to perform queries

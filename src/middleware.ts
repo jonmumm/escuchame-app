@@ -10,6 +10,7 @@ const privateKey = "my_private_key";
 
 const sessionMiddleware: MiddlewareResponseHandler = defineMiddleware(
   async ({ locals, cookies }, next) => {
+    console.log("midware", process.env.DATABASE_URL);
     let sessionToken = cookies.get("sessionToken")?.value;
     if (!sessionToken) {
       const userId = crypto.randomUUID();
