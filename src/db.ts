@@ -7,6 +7,8 @@ dotenv.config();
 // your actual PostgreSQL connection string
 const connectionString = process.env.DATABASE_URL!;
 
+console.log("creating db...");
+
 // for query purposes
 const queryClient = postgres(connectionString);
 const db: PostgresJsDatabase = drizzle(queryClient);
