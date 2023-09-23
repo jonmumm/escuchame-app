@@ -15,6 +15,8 @@ console.log({ connectionString });
 const queryClient = postgres(connectionString);
 const db: PostgresJsDatabase = drizzle(queryClient);
 
+console.log({ db });
+
 // now you can use db to perform queries
 // e.g., await db.select().from(users)...
 export default db;
