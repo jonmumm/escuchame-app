@@ -10,6 +10,7 @@ const privateKey = "my_private_key";
 
 const sessionMiddleware: MiddlewareResponseHandler = defineMiddleware(
   async ({ locals, cookies }, next) => {
+    console.log("req");
     let sessionToken = cookies.get("sessionToken")?.value;
     if (!sessionToken) {
       const userId = crypto.randomUUID();
@@ -28,7 +29,7 @@ const sessionMiddleware: MiddlewareResponseHandler = defineMiddleware(
         privateKey,
         {
           subject: sessionId,
-        }
+        },
       );
 
       cookies.set("sessionToken", sessionToken);
@@ -39,14 +40,14 @@ const sessionMiddleware: MiddlewareResponseHandler = defineMiddleware(
     assertNotNull(sessionId);
     assert(
       typeof parsed === "object" && "userId" in parsed,
-      "expeced userId in sessionToken"
+      "expeced userId in sessionToken",
     );
 
     locals.userId = parsed.userId;
     locals.sessionId = sessionId;
 
     return next();
-  }
+  },
 );
 
 // Export the middleware using sequence
