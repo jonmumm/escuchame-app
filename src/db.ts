@@ -1,12 +1,15 @@
 import dotenv from "dotenv";
-import { drizzle, PostgresJsDatabase } from "drizzle-orm/postgres-js";
+import { drizzle, type PostgresJsDatabase } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { users, sessions, responses } from "./schema";
+
+console.log("HI!!!");
 
 dotenv.config();
 
 // your actual PostgreSQL connection string
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL!;
+
+console.log({ connectionString });
 
 // for query purposes
 const queryClient = postgres(connectionString);
