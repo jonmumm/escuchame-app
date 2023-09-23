@@ -1,29 +1,65 @@
 ---
 import Flashcard from "../components/Flashcard.astro";
-import { getCardById, getCurrentReview } from "../services/flashcardService";
+import MainLayout from "../layouts/MainLayout.astro";
+import {
+  getCardById,
+  getNewCards,
+  getCurrentReview,
+  arrangeReviewQueue,
+  predictSuccessProbabilities,
+} from "../services/flashcardService";
+import db from "../db";
+import { assertNotNull } from "../utils";
+import { reviews } from "../schema";
+import { eq } from "drizzle-orm";
 
-const review = await getCurrentReview(Astro.locals.sessionId);
+// we set the queue size to 5, ensuring that if we get a question wrong, we
+// must go through 4 more questions before seeing it again
+const QUEUE_SIZE = 5;
+
+const { sessionId } = Astro.locals;
+
+let review = await getCurrentReview(db, sessionId);
+
+if (!review) {
+  // if we don't have a review, wait for it to finish before moving on
+  await arrangeReviewQueue(db, sessionId, QUEUE_SIZE);
+} else {
+  // if we do have a review, we're just creating future cards here...
+  arrangeReviewQueue(db, sessionId, QUEUE_SIZE).then(() => {
+    // no-op
+  });
+}
+
+review = await getCurrentReview(db, sessionId);
+assertNotNull(review);
+
+await db
+  .update(reviews)
+  .set({
+    shownAt: new Date(),
+  })
+  .where(eq(reviews.id, review.id));
+
+const newCards = await getNewCards(db, Astro.locals.userId, 5);
+console.log({ newCards });
+
 const card = await getCardById(review.cardId);
 ---
 
-<html>
-  <head>
-    <title>Listen | Escuchame</title>
-  </head>
-  <body>
-    {
-      card ? (
-        <>
-          <h1>Listen</h1>
-          <Flashcard
-            reviewId={review.id}
-            cardId={review.cardId}
-            voiceId={review.voiceId}
-          />
-        </>
-      ) : (
-        <h1>You're done for the day! Come back tomorrow for more.</h1>
-      )
-    }
-  </body>
-</html>
+<MainLayout title="Listen">
+  {
+    card ? (
+      <>
+        <h1>Listen</h1>
+        <Flashcard
+          reviewId={review.id}
+          cardId={review.cardId}
+          voiceId={review.voiceId}
+        />
+      </>
+    ) : (
+      <h1>You're done for the day! Come back tomorrow for more.</h1>
+    )
+  }
+</MainLayout>

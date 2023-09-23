@@ -27,11 +27,14 @@
     "queue": "^7.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "simple-statistics": "^7.8.3",
     "tailwindcss": "^3.3.3"
   },
   "devDependencies": {
     "@types/jsonwebtoken": "^9.0.3",
     "@types/node": "^20.6.2",
-    "drizzle-kit": "^0.19.12"
+    "drizzle-kit": "^0.19.12",
+    "prettier": "^3.0.3",
+    "prettier-plugin-astro": "^0.12.0"
   }
 }

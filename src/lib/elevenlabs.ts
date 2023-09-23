@@ -3,13 +3,14 @@ import { and, eq } from "drizzle-orm";
 import db from "../db";
 import { voiceTracks } from "../schema";
 import { getCardById } from "../services/flashcardService";
+import type { PostgresJsDatabase } from "drizzle-orm/postgres-js";
 
 const envSchema = z.object({
   ELEVENLABS_API_KEY: z.string(),
 });
 const { ELEVENLABS_API_KEY } = envSchema.parse(process.env);
 
-export async function getVoiceTrack(
+export async function generateVoiceTrack(
   voiceId: string,
   text: string
 ): Promise<Response> {
@@ -59,17 +60,16 @@ export const maybeCreateVoiceTrack = async (
     return false;
   }
 
-  createVoiceTrack(cardId, voiceId);
+  await createVoiceTrack(db, cardId, voiceId);
   return true;
 };
 
-export const createVoiceTrack = async (cardId: string, voiceId: string) => {
+export const createVoiceTrack = async (_db: PostgresJsDatabase, cardId: string, voiceId: string) => {
   const card = await getCardById(cardId);
-
-  const resp = await getVoiceTrack(voiceId, card.spanish);
+  const resp = await generateVoiceTrack(voiceId, card.spanish!);
   const data = (await resp.arrayBuffer()) as any;
 
-  await db.insert(voiceTracks).values({
+  await _db.insert(voiceTracks).values({
     cardId: card.id,
     voiceId,
     data,

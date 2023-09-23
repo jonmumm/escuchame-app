@@ -1,5 +1,6 @@
 ---
 import { eq } from "drizzle-orm";
+import MainLayout from "../layouts/MainLayout.astro";
 import db from "../db";
 import { users } from "../schema";
 import "../styles/common.css";
@@ -39,28 +40,23 @@ const { email } = user;
 console.log({ email });
 ---
 
-<html lang="en">
-  <head>
-    <title>Profile</title>
-  </head>
-  <body>
-    <h1>Profile</h1>
-    <p>Provide an email to save your progress.</p>
-    {
-      email ? (
-        <div>{email}</div>
-      ) : (
-        <form method="POST">
-          <label for="email">Email</label>
-          <input
-            required
-            name="email"
-            type="email"
-            placeholder="example@gmail.com"
-          />
-          <button>Submit</button>
-        </form>
-      )
-    }
-  </body>
-</html>
+<MainLayout>
+  <h1>Profile</h1>
+  <p>Provide an email to save your progress.</p>
+  {
+    email ? (
+      <div>{email}</div>
+    ) : (
+      <form method="POST">
+        <label for="email">Email</label>
+        <input
+          required
+          name="email"
+          type="email"
+          placeholder="example@gmail.com"
+        />
+        <button>Submit</button>
+      </form>
+    )
+  }
+</MainLayout>

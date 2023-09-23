@@ -1,9 +1,15 @@
 ---
 // Import the required functions
+import MainLayout from "../../layouts/MainLayout.astro";
 import { eq } from "drizzle-orm";
 import db from "../../db";
 import { reviews } from "../../schema";
-import { getCardById, getNextCardId } from "../../services/flashcardService";
+import {
+  getCardById,
+  updateCardProgress,
+  addToReviewQueue,
+  getCurrentReview,
+} from "../../services/flashcardService";
 import { assertNotNull } from "../../utils";
 
 const data = await Astro.request.formData();
@@ -14,13 +20,6 @@ assertNotNull(response);
 const reviewId = Astro.params.id;
 assertNotNull(reviewId);
 
-await db
-  .update(reviews)
-  .set({
-    value: response === "yes" ? 1 : 0,
-  })
-  .where(eq(reviews.id, reviewId));
-
 const [review] = await db
   .select()
   .from(reviews)
@@ -28,39 +27,58 @@ const [review] = await db
 assertNotNull(review);
 const { cardId } = review;
 
+await db.transaction(async (tx) => {
+  const correct = response === "yes";
+  const value = correct ? 1 : 0;
+  await tx
+    .update(reviews)
+    .set({
+      submittedAt: new Date(),
+      value,
+    })
+    .where(eq(reviews.id, reviewId));
+  await updateCardProgress(tx, cardId, Astro.locals.userId, value);
+
+  if (!correct) {
+    await addToReviewQueue(tx, Astro.locals.sessionId, cardId);
+  }
+});
+
 // Fetch the card information
 const card = await getCardById(cardId);
 assertNotNull(card);
 
 // Fetch the next card information
-const nextCardId = await getNextCardId(Astro.locals.userId);
+const currentReview = await getCurrentReview(db, Astro.locals.sessionId);
 ---
 
-<article>
-  <h2>
-    Your Response to "{card.english} = {card.spanish}" was: {response}
-  </h2>
-  <!-- <div>
+<MainLayout title="Result">
+  <article>
+    <h2>
+      Your Response to "{card.english} = {card.spanish}" was: {response}
+    </h2>
+    <!-- <div>
     <h3>Card History</h3>
     <p>To-Do: Display the history of the user's responses to this card.</p>
-  </div> -->
-  <div>
-    {
-      nextCardId ? (
-        <div>
-          <a
-            class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-            href={`/listen`}
-          >
-            Go to next card
-          </a>
-        </div>
-      ) : (
-        <div>
-          <h3>You're done for today! Check back tomorrow for more cards.</h3>
-          <a href="/">Go back to Home</a>
-        </div>
-      )
-    }
-  </div>
-</article>
+    </div> -->
+    <div>
+      {
+        currentReview ? (
+          <div>
+            <a
+              class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+              href={`/listen`}
+            >
+              Go to next card
+            </a>
+          </div>
+        ) : (
+          <div>
+            <h3>You're done for today! Check back tomorrow for more cards.</h3>
+            <a href="/">Go back to Home</a>
+          </div>
+        )
+      }
+    </div>
+  </article>
+</MainLayout>

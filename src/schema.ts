@@ -64,8 +64,10 @@ export const reviews = pgTable("reviews", {
   cardId: uuid("card_id").notNull(),
   voiceId: varchar("voice_id").notNull(),
   value: integer("value"),
-  shownAt: timestamp("shown_at").defaultNow().notNull(),
-  submittedAt: timestamp("submitted_at").defaultNow().notNull(),
+  previouslySeenCount: integer("previously_seen_count").notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  shownAt: timestamp("shown_at"),
+  submittedAt: timestamp("submitted_at"),
 });
 export type Review = InferModel<typeof reviews>;
 
@@ -74,5 +76,5 @@ export const cardsProgress = pgTable("cards_progress", {
   cardId: uuid("card_id").notNull(),
   difficulty: real("difficulty").default(0.3).notNull(),
   daysBetweenReviews: real("days_between_reviews").default(1).notNull(),
-  dateLastReviewed: timestamp("date_last_reviewed"),
+  dateLastReviewed: timestamp("date_last_reviewed").notNull(),
 });

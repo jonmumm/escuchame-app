@@ -1,5 +1,6 @@
 ---
 // Import the required functions
+import MainLayout from "../../layouts/MainLayout.astro";
 import { eq } from "drizzle-orm";
 import db from "../../db";
 import { reviews } from "../../schema";
@@ -15,8 +16,7 @@ const [review] = await db
   .from(reviews)
   .where(eq(reviews.id, reviewId));
 assertNotNull(review);
-const { cardId, voiceId } = review;
-console.log({ cardId });
+const { cardId } = review;
 
 // Fetch the card information
 const card = await getCardById(cardId);
@@ -25,25 +25,27 @@ assertNotNull(card);
 const audioUrl = getAudioUrl(card.id, review.voiceId);
 ---
 
-<article>
-  <h1 class="text-3xl font-bold">{card.spanish}</h1>
-  <h2>{card.english}</h2>
-  <audio controls src={audioUrl}></audio>
-  <form method="POST" action={`/result/${review.id}`}>
-    <label>Correct?</label>
-    <fieldset>
-      <button
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        type="submit"
-        name="response"
-        value="yes">Yes</button
-      >
-      <button
-        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        type="submit"
-        name="response"
-        value="no">No</button
-      >
-    </fieldset>
-  </form>
-</article>
+<MainLayout title="Respond">
+  <article>
+    <h1 class="text-3xl font-bold">{card.spanish}</h1>
+    <h2>{card.english}</h2>
+    <audio controls src={audioUrl}></audio>
+    <form method="POST" action={`/result/${review.id}`}>
+      <label>Correct?</label>
+      <fieldset>
+        <button
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          type="submit"
+          name="response"
+          value="yes">Yes</button
+        >
+        <button
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          type="submit"
+          name="response"
+          value="no">No</button
+        >
+      </fieldset>
+    </form>
+  </article>
+</MainLayout>

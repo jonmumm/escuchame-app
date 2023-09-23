@@ -1,25 +1,11 @@
 ---
-import "../styles/common.css";
+import MainLayout from "../layouts/MainLayout.astro";
 ---
 
-<html lang="en">
-  <head>
-    <title>Online Store</title>
-    <style>
-      h1 {
-        font-size: 36px;
-      }
-
-      .product-listing-title {
-        text-align: center;
-      }
-    </style>
-  </head>
-  <body>
-    <img alt="Escuchame app" src="escuchame.svg" />
-    <a
-      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-      href="/listen">Start</a
-    >
-  </body>
-</html>
+<MainLayout title="Home">
+  <img alt="Escuchame app" src="escuchame.svg" />
+  <a
+    class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+    href="/listen">Start</a
+  >
+</MainLayout>
