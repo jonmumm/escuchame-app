@@ -7,6 +7,7 @@ import voices from "../data/voices.json";
 import { cardsProgress, reviews, sessions } from "../schema";
 import type { Card } from "../types";
 import { assertNotNull } from "../utils";
+import { maybeCreateVoiceTrack } from "../lib/elevenlabs";
 
 export const getAudioUrl = (cardId: string, voiceId: string) => {
   return `/audio/${cardId}.${voiceId}.mp3`;
@@ -120,6 +121,11 @@ export async function addToReviewQueue(
   // Assign a random voiceId from the voices list
   const voiceId = voices[Math.floor(Math.random() * voices.length)];
 
+  maybeCreateVoiceTrack(cardId, voiceId).then(() => {
+    // this is to preload the track
+    // no-op here
+  });
+
   // Fetch user ID from session ID
   const userId = await getUserIdFromSession(_db, sessionId);
 
@@ -210,14 +216,6 @@ export async function getNewCards(
       selectedCards.push(cards[i].id);
     }
   }
-
-  console.log({
-    startIndex,
-    successRate,
-    lastIndex,
-    numCardsSeen,
-    learningRate,
-  });
 
   return selectedCards;
 }
