@@ -26,25 +26,23 @@ const audioUrl = getAudioUrl(card.id, review.voiceId);
 ---
 
 <MainLayout title="Respond">
-  <article>
-    <h1 class="text-3xl font-bold">{card.spanish}</h1>
-    <h2>{card.english}</h2>
-    <audio controls src={audioUrl}></audio>
-    <form method="POST" action={`/result/${review.id}`}>
-      <label>Correct?</label>
-      <fieldset>
+  <article class="max-w-lg mx-auto mt-10 p-4 flex flex-col items-center">
+    <h1 class="text-3xl font-bold mb-4">{card.spanish}</h1>
+    <h2 class="mb-4">{card.english}</h2>
+    <audio controls src={audioUrl} class="mb-4 w-full"></audio>
+    <form method="POST" action={`/result/${review.id}`} class="w-full">
+      <label class="block mb-2">Correct?</label>
+      <fieldset class="w-full">
         <button
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded mb-2 w-full"
           type="submit"
           name="response"
-          value="yes">Yes</button
-        >
+          value="yes">Yes</button>
         <button
-          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded w-full"
           type="submit"
           name="response"
-          value="no">No</button
-        >
+          value="no">No</button>
       </fieldset>
     </form>
   </article>

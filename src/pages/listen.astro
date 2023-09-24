@@ -1,17 +1,16 @@
 ---
-import Flashcard from "../components/Flashcard.astro";
-import MainLayout from "../layouts/MainLayout.astro";
-import {
-  getCardById,
-  getNewCards,
-  getCurrentReview,
-  arrangeReviewQueue,
-  predictSuccessProbabilities,
-} from "../services/flashcardService";
-import db from "../db";
-import { assertNotNull } from "../utils";
-import { reviews } from "../schema";
 import { eq } from "drizzle-orm";
+import db from "../db";
+import MainLayout from "../layouts/MainLayout.astro";
+import { reviews } from "../schema";
+import {
+  arrangeReviewQueue,
+  getAudioUrl,
+  getCardById,
+  getCurrentReview,
+  getNewCards,
+} from "../services/flashcardService";
+import { assertNotNull } from "../utils";
 
 // we set the queue size to 5, ensuring that if we get a question wrong, we
 // must go through 4 more questions before seeing it again
@@ -45,21 +44,34 @@ const newCards = await getNewCards(db, Astro.locals.userId, 5);
 console.log({ newCards });
 
 const card = await getCardById(review.cardId);
+const audioUrl = getAudioUrl(card.id, review.voiceId);
 ---
 
 <MainLayout title="Listen">
-  {
-    card ? (
-      <>
-        <h1>Listen</h1>
-        <Flashcard
-          reviewId={review.id}
-          cardId={review.cardId}
-          voiceId={review.voiceId}
-        />
-      </>
-    ) : (
-      <h1>You're done for the day! Come back tomorrow for more.</h1>
-    )
-  }
+  <article class="max-w-lg mx-auto mt-10 p-4 flex flex-col items-center">
+    <h1 class="text-3xl font-bold mb-4">Listen</h1>
+    <audio
+      controls
+      src={audioUrl}
+      class="mb-4 w-full"
+      id="audioElement"
+      onended="document.getElementById('revealButton').style.display = 'block'; "
+    ></audio>
+    <button
+      onclick="document.getElementById('audioElement').play();"
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded mb-4 w-full"
+    >
+      Play
+    </button>
+    <form method="POST" action={`/respond/${review.id}`} class="w-full">
+      <button
+        id="revealButton"
+        style="display: none;"
+        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded w-full"
+        type="submit"
+      >
+        Reveal
+      </button>
+    </form>
+  </article>
 </MainLayout>

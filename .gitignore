@@ -98,3 +98,6 @@ drizzle/
 dist/
 
 node_modules/
+
+# Cloudflare
+.cloudflared
