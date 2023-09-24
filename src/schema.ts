@@ -10,7 +10,6 @@ import {
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
-import { assert } from "./utils";
 
 const bytea = customType<{ data: Buffer; notNull: false; default: false }>({
   dataType() {
@@ -49,7 +48,7 @@ export const voiceTracks = pgTable(
     return {
       pk: primaryKey(table.cardId, table.voiceId),
     };
-  }
+  },
 );
 export type VoiceTrack = InferModel<typeof voiceTracks>;
 
@@ -75,6 +74,7 @@ export const cardsProgress = pgTable("cards_progress", {
   userId: uuid("user_id").references(() => users.id),
   cardId: uuid("card_id").notNull(),
   difficulty: real("difficulty").default(0.3).notNull(),
+  timesReviewed: integer("timesReviewed").default(1).notNull(),
   daysBetweenReviews: real("days_between_reviews").default(1).notNull(),
   dateLastReviewed: timestamp("date_last_reviewed").notNull(),
 });

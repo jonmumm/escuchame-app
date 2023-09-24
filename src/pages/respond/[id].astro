@@ -3,7 +3,7 @@
 import MainLayout from "../../layouts/MainLayout.astro";
 import { eq } from "drizzle-orm";
 import db from "../../db";
-import { reviews } from "../../schema";
+import { cardsProgress, reviews } from "../../schema";
 import { getCardById, getAudioUrl } from "../../services/flashcardService";
 import { assertNotNull } from "../../utils";
 
@@ -22,6 +22,13 @@ const { cardId } = review;
 const card = await getCardById(cardId);
 assertNotNull(card);
 
+const [progress] = await db
+  .select()
+  .from(cardsProgress)
+  .where(eq(cardsProgress.cardId, card.id));
+
+console.log({ progress });
+
 const audioUrl = getAudioUrl(card.id, review.voiceId);
 ---
 
@@ -37,12 +44,14 @@ const audioUrl = getAudioUrl(card.id, review.voiceId);
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded mb-2 w-full"
           type="submit"
           name="response"
-          value="yes">Yes</button>
+          value="yes">Yes</button
+        >
         <button
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded w-full"
           type="submit"
           name="response"
-          value="no">No</button>
+          value="no">No</button
+        >
       </fieldset>
     </form>
   </article>

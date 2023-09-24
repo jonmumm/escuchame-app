@@ -10,5 +10,10 @@ export default defineConfig({
   adapter: node({
     mode: "standalone",
   }),
-  integrations: [react(), tailwind()],
+  integrations: [
+    react(),
+    tailwind({
+      applyBaseStyles: false,
+    }),
+  ],
 });

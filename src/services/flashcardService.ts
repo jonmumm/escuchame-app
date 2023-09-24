@@ -426,6 +426,7 @@ export async function updateCardProgress(
         difficulty,
         daysBetweenReviews,
         dateLastReviewed,
+        timesReviewed: (cardProgress.timesReviewed = 1),
       })
       .where(
         and(eq(cardsProgress.cardId, cardId), eq(cardsProgress.userId, userId)),
