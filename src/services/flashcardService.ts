@@ -353,7 +353,7 @@ cards.forEach((card, index) => {
   };
 });
 
-export async function getCardById(cardId: string): Promise<Card> {
+export async function getCardById(cardId: string): Promise<CardWithIndex> {
   const card = cardsById[cardId];
   if (!card) {
     throw new Error("couldn't find card " + cardId);

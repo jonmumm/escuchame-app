@@ -1,9 +1,9 @@
 ---
 // Import the required functions
-import { and, desc, eq, isNotNull } from "drizzle-orm";
+import { and, desc, eq, isNotNull, sql } from "drizzle-orm";
 import db from "../../db";
 import MainLayout from "../../layouts/MainLayout.astro";
-import { reviews } from "../../schema";
+import { cardsProgress, reviews } from "../../schema";
 import { getAudioUrl, getCardById } from "../../services/flashcardService";
 import { assertNotNull } from "../../utils";
 import { formatDistanceToNow } from "date-fns";
@@ -43,12 +43,48 @@ const pastReviews = await db
   .orderBy(desc(reviews.createdAt))
   .limit(5); // You can adjust the limit as per your requirement
 
-console.log({
-  pastReviews,
-  cardId,
-  sessionId: Astro.locals.sessionId,
-  userId: Astro.locals.userId,
-});
+// Fetch the progress (difficulty) for the card
+const [cardProgress] = await db
+  .select()
+  .from(cardsProgress)
+  .where(
+    and(
+      eq(cardsProgress.cardId, cardId),
+      eq(cardsProgress.userId, Astro.locals.userId),
+    ),
+  );
+
+const progress = cardProgress ? 1 - cardProgress.difficulty : 1;
+
+const [seenCountRow] = await db
+  .select({ count: sql<number>`count(*)::int` })
+  .from(reviews)
+  .where(
+    and(
+      eq(reviews.userId, Astro.locals.userId),
+      eq(reviews.cardId, cardId),
+      isNotNull(reviews.submittedAt),
+    ),
+  );
+
+const previouslySeenCount = seenCountRow ? seenCountRow.count : 0;
+
+// Fetch the count of correct answers for the card
+const [correctAnswersCountRow] = await db
+  .select({ count: sql<number>`count(*)::int` })
+  .from(reviews)
+  .where(
+    and(
+      eq(reviews.userId, Astro.locals.userId),
+      eq(reviews.cardId, cardId),
+      isNotNull(reviews.submittedAt),
+      eq(reviews.value, 1), // 1 for Correct
+    ),
+  );
+
+const correctAnswersCount = correctAnswersCountRow
+  ? correctAnswersCountRow.count
+  : 0;
 ---
 
 <MainLayout title="Respond">
@@ -74,6 +110,20 @@ console.log({
         >
       </fieldset>
     </form>
+    <!-- Display progress and count of correct answers -->
+    <div class="mt-4 mb-2 text-center w-full">
+      {
+        previouslySeenCount > 0 && (
+          <>
+            <p class="text-xl">Progress: {(progress * 100).toFixed(0)}%</p>
+            <p class="text-md">
+              Answered correctly {correctAnswersCount} out of{" "}
+              {previouslySeenCount} times.
+            </p>
+          </>
+        )
+      }
+    </div>
     {
       pastReviews.length ? (
         <>
@@ -89,5 +139,10 @@ console.log({
         </>
       ) : null
     }
+    <div
+      class="absolute mb-4 bottom-0 left-1/2 transform -translate-x-1/2 text-s"
+    >
+      {card.index + 1}
+    </div>
   </article>
 </MainLayout>
