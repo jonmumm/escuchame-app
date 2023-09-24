@@ -1,6 +1,5 @@
 ---
 import MainLayout from "../layouts/MainLayout.astro";
-import { buttonVariants } from "@/components/ui/button";
 ---
 
 <MainLayout title="Home">
@@ -9,10 +8,14 @@ import { buttonVariants } from "@/components/ui/button";
 
     <h3 class="text-xl font-semibold mb-6">Daily Spanish listening practice</h3>
 
-    <a href="/listen" class={`w-full mt-1 mb-6 ${buttonVariants()}`}>Start</a>
+    <a
+      href="/listen"
+      class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded w-full flex items-center justify-center mb-8"
+    >
+      Start
+    </a>
 
-    <h2 class="text-2xl font-bold">Why Escuchame?</h2>
-
+    <h2 class="text-2xl font-bold mb-6">Why Escuchame?</h2>
     <ul class="space-y-4">
       <li class="flex items-start">
         <span class="text-blue-500 mr-4">•</span>
