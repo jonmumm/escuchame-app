@@ -1,11 +1,12 @@
 ---
 // Import the required functions
-import MainLayout from "../../layouts/MainLayout.astro";
-import { eq } from "drizzle-orm";
+import { and, desc, eq, isNotNull } from "drizzle-orm";
 import db from "../../db";
+import MainLayout from "../../layouts/MainLayout.astro";
 import { reviews } from "../../schema";
-import { getCardById, getAudioUrl } from "../../services/flashcardService";
+import { getAudioUrl, getCardById } from "../../services/flashcardService";
 import { assertNotNull } from "../../utils";
+import { formatDistanceToNow } from "date-fns";
 
 // Extract the ID from the URL
 const reviewId = Astro.params.id;
@@ -23,6 +24,31 @@ const card = await getCardById(cardId);
 assertNotNull(card);
 
 const audioUrl = getAudioUrl(card.id, review.voiceId);
+
+const formatDate = (date: Date) => {
+  return `${formatDistanceToNow(date)} ago`;
+};
+
+// Fetch the past reviews for the card
+const pastReviews = await db
+  .select()
+  .from(reviews)
+  .where(
+    and(
+      eq(reviews.cardId, cardId),
+      eq(reviews.userId, Astro.locals.userId),
+      isNotNull(reviews.submittedAt),
+    ),
+  )
+  .orderBy(desc(reviews.createdAt))
+  .limit(5); // You can adjust the limit as per your requirement
+
+console.log({
+  pastReviews,
+  cardId,
+  sessionId: Astro.locals.sessionId,
+  userId: Astro.locals.userId,
+});
 ---
 
 <MainLayout title="Respond">
@@ -30,20 +56,38 @@ const audioUrl = getAudioUrl(card.id, review.voiceId);
     <h1 class="text-3xl font-bold mb-4">{card.spanish}</h1>
     <h2 class="mb-4">{card.english}</h2>
     <audio controls src={audioUrl} class="mb-4 w-full"></audio>
+
     <form method="POST" action={`/result/${review.id}`} class="w-full">
-      <label class="block mb-2">Correct?</label>
+      <label class="block text-xl mb-2 font-bold text-center">Correct?</label>
       <fieldset class="w-full">
         <button
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded mb-2 w-full"
           type="submit"
           name="response"
-          value="yes">Yes</button>
+          value="yes">Yes</button
+        >
         <button
           class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded w-full"
           type="submit"
           name="response"
-          value="no">No</button>
+          value="no">No</button
+        >
       </fieldset>
     </form>
+    {
+      pastReviews.length ? (
+        <>
+          <h3 class="text-l font-bold my-4">Past Responses</h3>
+          <ul class="mb-4 w-full">
+            {pastReviews.map((review) => (
+              <li class="mb-2">
+                {formatDate(new Date(review.submittedAt!))} -
+                {review.value ? "Correct" : "Incorrect"}
+              </li>
+            ))}
+          </ul>
+        </>
+      ) : null
+    }
   </article>
 </MainLayout>
