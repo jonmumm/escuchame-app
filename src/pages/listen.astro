@@ -41,7 +41,6 @@ await db
   .where(eq(reviews.id, review.id));
 
 const newCards = await getNewCards(db, Astro.locals.userId, 5);
-console.log({ newCards });
 
 const card = await getCardById(review.cardId);
 const audioUrl = getAudioUrl(card.id, review.voiceId);

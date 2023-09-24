@@ -81,7 +81,6 @@ export async function arrangeReviewQueue(
 
   // 2. Determine current queue size
   const currentQueueSize = await getCurrentQueueSize(_db, sessionId);
-  console.log({ currentQueueSize });
 
   // 3. Fetch overdue cards
   const overdueCards = await getOverdueCardIds(_db, userId);
@@ -518,7 +517,6 @@ export async function predictSuccessProbabilities(
       predictedScores[cardId] = regression.m * cardIndex + regression.b;
     }
   }
-  console.log({ seenCardIds, outcomes, predictedScores });
 
   return predictedScores;
 }
